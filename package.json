@@ -1,5 +1,5 @@
 {
-  "name": "wm-redis-lock",
+  "name": "wm-redis-locks",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
