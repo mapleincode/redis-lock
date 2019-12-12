@@ -37,11 +37,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var RedisLock = /** @class */ (function () {
-    function RedisLock(redis, key, timeout) {
+    function RedisLock(redis, key, timeout, options) {
         this.redis = redis;
         this._key = key;
         this._timeout = timeout;
         this.expireTimes = 0;
+        this._options = {
+            defaultExpireTimes: options.defaultExpireTimes || 20
+        };
     }
     RedisLock.prototype.lock = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -56,7 +59,7 @@ var RedisLock = /** @class */ (function () {
                         return [4 /*yield*/, this.redis.expire(this._key, this._timeout)];
                     case 2:
                         _a.sent();
-                        this.expireTimes = 20;
+                        this.expireTimes = this._options.defaultExpireTimes;
                         return [2 /*return*/, true];
                     case 3:
                         if (!(this.expireTimes-- <= 0)) return [3 /*break*/, 8];
@@ -72,7 +75,8 @@ var RedisLock = /** @class */ (function () {
                         _a.sent();
                         _a.label = 7;
                     case 7:
-                        this.expireTimes = 20; // 设置 20 次等待
+                        this.expireTimes = this._options.defaultExpireTimes;
+                        ; // 设置 20 次等待
                         return [2 /*return*/, false];
                     case 8: return [2 /*return*/, false];
                 }

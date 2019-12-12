@@ -2,9 +2,13 @@
  * @Author: maple
  * @Date: 2019-12-11 15:59:07
  * @LastEditors: maple
- * @LastEditTime: 2019-12-12 16:52:27
+ * @LastEditTime: 2019-12-12 17:02:21
  */
 import { Redis } from 'ioredis';
+
+interface options {
+    defaultExpireTimes?: number;
+}
 
 export default class RedisLock {
     private redis: Redis;
@@ -12,12 +16,18 @@ export default class RedisLock {
     private _timeout: number;
     private expireTimes: number;
 
-    constructor(redis: Redis, key: string, timeout: number) {
+    private _options: options;
+
+    constructor(redis: Redis, key: string, timeout: number, options?: options) {
         this.redis = redis;
         this._key = key;
         this._timeout = timeout;
 
         this.expireTimes = 0;
+
+        this._options = {
+            defaultExpireTimes: options.defaultExpireTimes || 20
+        };
     }
 
     async lock(): Promise<boolean> {
@@ -26,7 +36,7 @@ export default class RedisLock {
         if(times === 1) {
             this.expireTimes = 0;
             await this.redis.expire(this._key, this._timeout);
-            this.expireTimes = 20;
+            this.expireTimes = this._options.defaultExpireTimes;
             return true;
         } else if(this.expireTimes-- <= 0) {
             // expireTimes 如果小于 0 ，说明次数已使用完，可以再次检查 sll。
@@ -38,7 +48,7 @@ export default class RedisLock {
                 await this.redis.expire(this._key, this._timeout);
             }
 
-            this.expireTimes = 20; // 设置 20 次等待
+            this.expireTimes = this._options.defaultExpireTimes;; // 设置 20 次等待
             return false;
         }
 
