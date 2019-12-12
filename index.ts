@@ -2,7 +2,7 @@
  * @Author: maple
  * @Date: 2019-12-11 15:59:07
  * @LastEditors: maple
- * @LastEditTime: 2019-12-11 16:05:11
+ * @LastEditTime: 2019-12-12 16:52:27
  */
 import { Redis } from 'ioredis';
 
@@ -29,7 +29,6 @@ export default class RedisLock {
             this.expireTimes = 20;
             return true;
         } else if(this.expireTimes-- <= 0) {
-            console.log('检查 ttl');
             // expireTimes 如果小于 0 ，说明次数已使用完，可以再次检查 sll。
             const ttl = await this.redis.ttl(this._key);
             if(ttl === -2) {

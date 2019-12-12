@@ -60,7 +60,6 @@ var RedisLock = /** @class */ (function () {
                         return [2 /*return*/, true];
                     case 3:
                         if (!(this.expireTimes-- <= 0)) return [3 /*break*/, 8];
-                        console.log('检查 ttl');
                         return [4 /*yield*/, this.redis.ttl(this._key)];
                     case 4:
                         ttl = _a.sent();
