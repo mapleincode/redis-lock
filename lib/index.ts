@@ -24,11 +24,8 @@ export default class RedisLock {
 
     this.expireTimes = 0;
 
-    if (options?.defaultExpireTimes !== undefined) {
-      this.defaultExpireTimes = options.defaultExpireTimes;
-    } else {
-      this.defaultExpireTimes = 20;
-    }
+    const defaultExpireTimes = options?.defaultExpireTimes;
+    this.defaultExpireTimes = defaultExpireTimes != null ? defaultExpireTimes : 20;
   }
 
   async lock (): Promise<boolean> {
